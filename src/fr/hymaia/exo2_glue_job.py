@@ -20,11 +20,9 @@ if __name__ == '__main__':
     input_path = args["PARAM_1"]  
     output_path = args["PARAM_2"] 
 
-    # SIMULATION : je n'ai absolument pas de donneés sur S3 et autres, je ne sais pas comment ca marche, donc tout ce qui est en dessous
-    # c'est "bateau", je l'ai mis pour faire genre mais il se passe rien vu que y'a pas de données etc...
-    # mais la pipeline tourne donc bah c'est bon en principe (juste il se passse rien quoi ^^)
+    # SIMULATION : 
 
-    # Charger des donneés depuis S3 ? 
+    # "Charger des donneés depuis S3"
     df = spark.read.csv(input_path, header=True, inferSchema=True)  # (CSV ici)
 
     # On applique une transformation simple

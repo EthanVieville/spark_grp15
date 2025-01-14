@@ -17,9 +17,9 @@ def main():
     )
 
     # Afficher les résultats
-    #df_with_category_name.show()
+    df_with_category_name.show()
 
-    sums_1 = True
+    sums_1 = False
     sums_2 = False
 
     if sums_1:
@@ -40,30 +40,22 @@ def main():
 
 
     if sums_2:
-                  # Convertir price en double
         df = df_with_category_name.withColumn("price", f.col("price").cast("double"))
         
-        # Convertir date en type date
         df = df.withColumn("date", f.to_date("date"))
 
-        # Ajouter une colonne avec un timestamp pour plus de contrôle
         df = df.withColumn("timestamp", f.col("date").cast("timestamp"))
 
-        # Fenêtre glissante : utiliser `ROWS BETWEEN` et une jointure sur les 30 derniers jours
         window_spec = Window.partitionBy("category").orderBy("timestamp")
 
-        # **Repartitionner les données avant les transformations**
-        df_repart = df.repartition(100)  # Ajuste 200 en fonction de la taille de ton dataset
+        df_repart = df.repartition(100)  
 
-        # Ajouter une colonne avec les résultats de la somme sur 30 jours (logique explicite)
         df_with_sum = df_repart.withColumn(
             "total_price_per_category_per_day_last_30_days",
             f.sum("price").over(window_spec.rowsBetween(Window.unboundedPreceding, Window.currentRow))
         )
 
-        # Afficher le résultat final
         df_with_sum.orderBy("category", "timestamp").show()
-    
-    # Nettoyer la SparkSession via le provider
+
     SparkSessionProvider.reset_session()
 
